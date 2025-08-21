@@ -57,10 +57,16 @@ class AutoRepeat(Document):
 		validate_template(self.message or "")
 
 	def before_insert(self):
+<<<<<<< HEAD
 		if not frappe.flags.in_test:
 			start_date = self.start_date
 			today_date = today()
 			if start_date <= today_date:
+=======
+		if not frappe.in_test:
+			today_date = getdate()
+			if getdate(self.start_date) < today_date:
+>>>>>>> 50fa79f74f (fix(auto repeat): validate date (#33724))
 				self.start_date = today_date
 
 	def after_save(self):
@@ -101,14 +107,25 @@ class AutoRepeat(Document):
 			return
 
 		if self.end_date:
-			self.validate_from_to_dates("start_date", "end_date")
-		if self.end_date == today():
-			frappe.throw(_("End Date cannot be today."))
+			end_date = getdate(self.end_date)
 
+<<<<<<< HEAD
 		if self.end_date == self.start_date:
 			frappe.throw(
 				_("{0} should not be same as {1}").format(frappe.bold("End Date"), frappe.bold("Start Date"))
 			)
+=======
+			self.validate_from_to_dates("start_date", "end_date")
+
+			if end_date == getdate():
+				frappe.throw(_("End Date cannot be today."))
+			if end_date == getdate(self.start_date):
+				frappe.throw(
+					_("{0} should not be same as {1}").format(
+						frappe.bold(_("End Date")), frappe.bold(_("Start Date"))
+					)
+				)
+>>>>>>> 50fa79f74f (fix(auto repeat): validate date (#33724))
 
 	def validate_email_id(self):
 		if self.notify_by_email:
